@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DoitRight Construction — Toronto Home Renovation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #080808;
+      --bg-2:      #0d0d0d;
+      --bg-3:      #111111;
+      --cream:     #e8e8e4;
+      --cream-dim: #909090;
+      --cream-mid: #5a5a58;
+      --cream-low: #2e2e2c;
+      --green:     #009145;
+      --green-dim: rgba(0,145,69,0.18);
+      --green-line:rgba(0,145,69,0.16);
+      --ff:        'Oswald', 'Arial Narrow', sans-serif;
+      --ff2:       'Jost', 'Helvetica Neue', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--cream);
+      font-family: var(--ff2);
+      font-weight: 300;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Film-grain overlay */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9000;
+      opacity: 0.04;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 300px 300px;
+    }
+
+    /* ═══════════════════════ NAV ═══════════════════════ */
+
+    nav {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      z-index: 500;
+      padding: 1.6rem 4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    nav::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(8,8,8,0.9) 0%, transparent 100%);
+      pointer-events: none;
+    }
+
+    .nav-logo {
+      text-decoration: none;
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-logo img {
+      height: 70px;
+      width: auto;
+      display: block;
+      background: #fff;
+      padding: 5px 14px;
+      border-radius: 2px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.8rem;
+      list-style: none;
+      position: relative;
+      z-index: 1;
+    }
+
+    .nav-links a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.78rem;
+      font-weight: 400;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      transition: color 0.25s;
+    }
+
+    .nav-links a:hover { color: var(--green); }
+
+    .nav-cta {
+      position: relative;
+      z-index: 1;
+      font-family: var(--ff2);
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #fff;
+      text-decoration: none;
+      background: var(--green);
+      border: 2px solid var(--green);
+      padding: 0.85rem 2rem;
+      box-shadow: 0 0 18px rgba(0,145,69,0.45);
+      transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+    }
+
+    .nav-cta:hover {
+      background: #00a84f;
+      border-color: #00a84f;
+      box-shadow: 0 0 28px rgba(0,145,69,0.7);
+      transform: translateY(-1px);
+    }
+
+    /* ═══════════════════════ HERO ═══════════════════════ */
+
+    /* Fixed background — behind all page content */
+    .hero-video {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      filter: brightness(0.52) saturate(0.85);
+      z-index: 0;
+    }
+
+    .hero-bg-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.50);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Hero — normal 100vh section, scrolls freely */
+    .hero-section {
+      position: relative;
+      height: 100vh;
+      background: transparent;
+      z-index: 2;
+    }
+
+    .hero-sticky {
+      position: relative;
+      height: 100%;
+    }
+
+    .hero-content {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 9rem 4.5rem 5.5rem;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--ff2);
+      font-size: 0.6rem;
+      font-weight: 400;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 1.4rem;
+      opacity: 0;
+      animation: slideUp 1s 0.4s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+
+    .hero-title {
+      font-family: var(--ff);
+      font-size: clamp(3.8rem, 8.5vw, 8.5rem);
+      font-weight: 700;
+      line-height: 0.92;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--cream);
+      margin-bottom: 1.8rem;
+      opacity: 0;
+      animation: slideUp 1s 0.65s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+
+    .hero-subtitle {
+      font-family: var(--ff2);
+      font-size: clamp(0.9rem, 1.8vw, 1.25rem);
+      font-weight: 300;
+      color: var(--green);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      animation: slideUp 1s 0.9s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+
+    .hero-desc {
+      font-family: var(--ff2);
+      font-size: 0.9rem;
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      color: #fff;
+      max-width: 26rem;
+      line-height: 2;
+      display: inline-block;
+      background: rgba(0,0,0,0.5);
+      padding: 0.5rem 0.85rem;
+      opacity: 0;
+      animation: slideUp 1s 1.1s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+
+    /* Vertical scroll cue */
+    .scroll-cue {
+      position: absolute;
+      bottom: 2.8rem;
+      right: 4.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.6rem;
+      opacity: 0;
+      animation: fadeIn 1.2s 1.8s ease forwards;
+    }
+
+    .scroll-cue-line {
+      width: 1px;
+      height: 3.5rem;
+      background: linear-gradient(to bottom, transparent, var(--green));
+      animation: breathe 2.5s 2s ease-in-out infinite;
+    }
+
+    .scroll-cue-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: #fff;
+      writing-mode: vertical-lr;
+      transform: rotate(180deg);
+    }
+
+    /* Video progress bar */
+    .video-progress {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 1px;
+      width: 0%;
+      background: var(--green);
+      opacity: 0.5;
+      transition: none;
+      z-index: 2;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(2.5rem); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    @keyframes breathe {
+      0%, 100% { opacity: 0.35; transform: scaleY(1); }
+      50%       { opacity: 1;    transform: scaleY(1.25); }
+    }
+
+    /* ═══════════════════════ HERO REVEAL TEXT ═══════════════════════ */
+
+    .hero-reveal {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: flex-end;
+      padding: 0 4.5rem 5.5rem;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .hero-reveal-text {
+      font-family: var(--ff2);
+      font-size: clamp(0.85rem, 1.3vw, 1.05rem);
+      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: #fff;
+      max-width: 54rem;
+      line-height: 2.1;
+      background: rgba(0,0,0,0.5);
+      padding: 1rem 1.4rem;
+    }
+
+    .hero-reveal-text strong {
+      color: var(--green);
+    }
+
+    /* ═══════════════════════ SERVICES ═══════════════════════ */
+
+    .services {
+      position: relative;
+      z-index: 2;
+      padding: 8rem 4.5rem;
+      background: transparent;
+    }
+
+    .section-label {
+      font-family: var(--ff2);
+      font-size: 0.72rem;
+      font-weight: 400;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--green);
+      display: inline-flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 4.5rem;
+    }
+
+    /* Dark bg only where label sits over the video */
+    .services .section-label {
+      background: rgba(0,0,0,0.5);
+      padding: 0.4rem 0.9rem;
+    }
+
+    .section-label::after {
+      content: '';
+      display: block;
+      height: 1px;
+      width: 2.5rem;
+      background: var(--green);
+      opacity: 0.45;
+    }
+
+    .services-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: end;
+      gap: 3rem;
+      margin-bottom: 5rem;
+    }
+
+    .services-title {
+      font-family: var(--ff);
+      font-size: clamp(3rem, 6vw, 5.5rem);
+      font-weight: 700;
+      line-height: 0.92;
+      color: var(--cream);
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+
+    .services-title em {
+      font-style: normal;
+      color: var(--green);
+    }
+
+    .services-intro {
+      font-family: var(--ff2);
+      font-size: 1.125rem;
+      font-weight: 300;
+      line-height: 1.7;
+      color: #fff;
+      max-width: 30rem;
+      background: rgba(0,0,0,0.5);
+      padding: 1.25rem 1.5rem;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-top: 1px solid var(--green-line);
+    }
+
+    .service-item {
+      padding: 3rem 2.5rem 3.5rem;
+      border-right: 1px solid var(--green-line);
+      transition: background 0.5s;
+      position: relative;
+      overflow: hidden;
+      display: block;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .service-item:last-child { border-right: none; }
+
+    .service-item::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 0;
+      background: linear-gradient(to top, rgba(0,145,69,0.08), transparent);
+      transition: height 0.5s;
+    }
+
+    .service-item:hover::after { height: 100%; }
+
+    .service-num {
+      font-family: var(--ff2);
+      font-size: 0.6rem;
+      font-weight: 400;
+      letter-spacing: 0.12em;
+      color: var(--green);
+      display: block;
+      margin-bottom: 2.2rem;
+    }
+
+    .service-name {
+      font-family: var(--ff);
+      font-size: clamp(1.4rem, 2.2vw, 2rem);
+      font-weight: 600;
+      line-height: 1.1;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: var(--cream);
+      margin-bottom: 2.5rem;
+    }
+
+    .service-bar {
+      width: 1.8rem;
+      height: 1px;
+      background: var(--green);
+      opacity: 0.35;
+      transition: width 0.5s ease, opacity 0.5s;
+    }
+
+    .service-item:hover .service-bar {
+      width: 3.5rem;
+      opacity: 0.7;
+    }
+
+    /* ═══════════════════════ ABOUT ═══════════════════════ */
+
+    .about {
+      padding: 9rem 4.5rem;
+      background: var(--bg-3);
+      position: relative;
+      z-index: 2;
+      border-radius: 16px 16px 0 0;
+      box-shadow: 0 -16px 60px rgba(0, 0, 0, 0.8);
+    }
+
+    .about-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 100%;
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 5fr 7fr;
+      gap: 9rem;
+      align-items: start;
+    }
+
+    .manifesto {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .manifesto-line {
+      font-family: var(--ff);
+      font-size: clamp(2rem, 3.2vw, 3.2rem);
+      font-weight: 500;
+      line-height: 1.25;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: var(--cream-low);
+      transition: color 0.3s ease;
+      cursor: default;
+      padding-bottom: 0.1em;
+    }
+
+    .manifesto-line:hover { color: var(--cream-dim); }
+
+    .manifesto-line.accent {
+      color: var(--green);
+      font-weight: 700;
+    }
+
+    .about-right {
+      padding-top: 0.5rem;
+    }
+
+    .about-pull {
+      font-family: var(--ff);
+      font-size: clamp(1.6rem, 2.5vw, 2.4rem);
+      font-weight: 600;
+      line-height: 1.25;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: var(--cream);
+      border-left: 3px solid var(--green);
+      padding-left: 2rem;
+      margin-bottom: 3.5rem;
+    }
+
+    .about-body {
+      font-family: var(--ff2);
+      font-size: 1rem;
+      font-weight: 300;
+      line-height: 2;
+      color: #fff;
+      max-width: 38rem;
+    }
+
+    .about-detail {
+      margin-top: 3rem;
+      font-family: var(--ff2);
+      font-size: 0.82rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #fff;
+    }
+
+    .about-detail span {
+      color: var(--green);
+      margin-right: 0.6rem;
+    }
+
+    /* ═══════════════════════ TESTIMONIALS ═══════════════════════ */
+
+    .testimonials {
+      position: relative;
+      z-index: 2;
+      padding: 8rem 4.5rem;
+      background: var(--bg);
+      border-top: 1px solid var(--green-line);
+    }
+
+    .testimonials-hd {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: end;
+      margin-bottom: 5rem;
+    }
+
+    .testimonials-title {
+      font-family: var(--ff);
+      font-size: clamp(2.8rem, 5.5vw, 5rem);
+      font-weight: 700;
+      line-height: 0.92;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--cream);
+    }
+
+    .testimonials-note {
+      font-family: var(--ff2);
+      font-size: 1.1rem;
+      font-weight: 300;
+      letter-spacing: 0.02em;
+      color: #fff;
+      max-width: 28rem;
+      line-height: 1.9;
+      align-self: end;
+    }
+
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--green-line);
+    }
+
+    .testimonial-card {
+      background: var(--bg);
+      padding: 3.5rem 3rem;
+      position: relative;
+      transition: background 0.4s;
+    }
+
+    .testimonial-card:hover { background: rgba(17,17,16,0.9); }
+
+    .t-mark {
+      font-family: var(--ff2);
+      font-size: 4rem;
+      line-height: 0.7;
+      color: var(--green);
+      opacity: 0.5;
+      display: block;
+      margin-bottom: 1.5rem;
+      user-select: none;
+    }
+
+    .t-text {
+      font-family: var(--ff2);
+      font-size: clamp(1rem, 1.4vw, 1.1rem);
+      font-weight: 300;
+      line-height: 1.9;
+      color: #fff;
+      margin-bottom: 2.5rem;
+    }
+
+    .t-author {
+      font-family: var(--ff2);
+      font-size: 0.6rem;
+      font-weight: 400;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--green);
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .t-author::before {
+      content: '';
+      display: block;
+      width: 1.5rem;
+      height: 1px;
+      background: var(--green);
+      opacity: 0.5;
+    }
+
+    /* ═══════════════════════ CTA ═══════════════════════ */
+
+    .cta-section {
+      position: relative;
+      z-index: 2;
+      padding: 11rem 4.5rem;
+      background: var(--bg-2);
+      border-top: 1px solid var(--green-line);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 100%, rgba(0,145,69,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .cta-inner {
+      max-width: 55rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-eyebrow {
+      font-family: var(--ff2);
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 2.2rem;
+    }
+
+    .cta-title {
+      font-family: var(--ff);
+      font-size: clamp(3rem, 7vw, 6.5rem);
+      font-weight: 700;
+      line-height: 0.92;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--cream);
+      margin-bottom: 1.5rem;
+    }
+
+    .cta-sub {
+      font-family: var(--ff2);
+      font-size: clamp(0.8rem, 1.4vw, 1rem);
+      font-weight: 300;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 4rem;
+    }
+
+    .cta-btn {
+      display: inline-block;
+      font-family: var(--ff2);
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #fff;
+      background: var(--green);
+      text-decoration: none;
+      padding: 1.15rem 3.8rem;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .cta-btn:hover {
+      background: var(--cream);
+      color: var(--bg);
+    }
+
+    /* ═══════════════════════ FOOTER ═══════════════════════ */
+
+    footer {
+      position: relative;
+      z-index: 2;
+      background: var(--bg);
+      border-top: 1px solid var(--green-line);
+      padding: 3rem 4.5rem;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .footer-logo {
+      font-family: var(--ff);
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #fff;
+    }
+
+    .footer-nav {
+      display: flex;
+      gap: 2.2rem;
+      list-style: none;
+    }
+
+    .footer-nav a {
+      font-family: var(--ff2);
+      font-size: 0.78rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #fff;
+      text-decoration: none;
+      transition: color 0.25s;
+    }
+
+    .footer-nav a:hover { color: var(--green); }
+
+    .footer-right {
+      text-align: right;
+    }
+
+    .footer-ig {
+      display: block;
+      font-family: var(--ff2);
+      font-size: 0.62rem;
+      letter-spacing: 0.12em;
+      color: var(--green);
+      text-decoration: none;
+      transition: opacity 0.25s;
+      margin-bottom: 0.6rem;
+    }
+
+    .footer-ig:hover { opacity: 0.65; }
+
+    .footer-copy {
+      font-family: var(--ff2);
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      color: #fff;
+    }
+
+    /* ═══════════════════════ SCROLL REVEALS ═══════════════════════ */
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(1.8rem);
+      transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1),
+                  transform 0.9s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ═══════════════════════ RESPONSIVE ═══════════════════════ */
+
+    @media (max-width: 1100px) {
+      .services-grid { grid-template-columns: repeat(2, 1fr); }
+      .service-item:nth-child(2) { border-right: none; }
+      .service-item:nth-child(3),
+      .service-item:nth-child(4) { border-top: 1px solid var(--green-line); }
+      .service-item:nth-child(4) { border-right: none; }
+    }
+
+    @media (max-width: 860px) {
+      .about-grid { grid-template-columns: 1fr; gap: 4rem; }
+      .services-header { grid-template-columns: 1fr; }
+      .testimonials-hd { grid-template-columns: 1fr; }
+      .testimonials-note { display: none; }
+    }
+
+    @media (max-width: 700px) {
+      nav { padding: 1.2rem 1.6rem; }
+      .nav-links { display: none; }
+
+      .hero-content { padding: 0 1.6rem 4rem; }
+      .hero-reveal { padding: 0 1.6rem 4rem; }
+      .scroll-cue { right: 1.6rem; }
+
+      .services { padding: 5rem 1.6rem; }
+      .services-grid { grid-template-columns: 1fr; }
+      .service-item {
+        border-right: none;
+        border-top: 1px solid var(--green-line);
+      }
+      .service-item:first-child { border-top: none; }
+
+      .about { padding: 5.5rem 1.6rem; }
+
+      .testimonials { padding: 5rem 1.6rem; }
+      .testimonials-grid { grid-template-columns: 1fr; }
+
+      .cta-section { padding: 6rem 1.6rem; }
+
+      footer {
+        grid-template-columns: 1fr;
+        text-align: center;
+        padding: 2.5rem 1.6rem;
+      }
+      .footer-nav { justify-content: center; }
+      .footer-right { text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── FIXED BACKGROUND VIDEO (behind all content) ── -->
+  <video class="hero-video" id="heroVideo" muted playsinline preload="auto">
+    <source src="kling1.mp4" type="video/mp4">
+  </video>
+  <div class="hero-bg-overlay"></div>
+
+  <!-- ── NAV ──────────────────────────────────── -->
+  <nav>
+    <a href="#" class="nav-logo">
+      <img src="logo.png" alt="DoitRight Construction">
+    </a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#testimonials">Clients</a></li>
+      <li><a href="https://www.doitrightconstruction.ca/index.php/gallery/" target="_blank" rel="noopener">Gallery</a></li>
+    </ul>
+    <a href="https://www.doitrightconstruction.ca/index.php/get-started-here/" target="_blank" rel="noopener" class="nav-cta">Get a Quote</a>
+  </nav>
+
+  <!-- ── HERO FOREGROUND (scroll space + sticky text) ── -->
+  <section class="hero-section" id="hero">
+    <div class="hero-sticky">
+
+      <div class="hero-content" id="heroContent">
+<h1 class="hero-title">
+          We Build<br>for Beauty.<br>We Build<br>to Last.
+        </h1>
+        <p class="hero-desc">Your Trusted Home Renovation Contractor</p>
+      </div>
+
+      <div class="hero-reveal" id="heroReveal">
+        <p class="hero-reveal-text">
+          <strong>DoitRight Construction</strong> is a home renovation company servicing the Greater Toronto Area. We take pride in making remodeling your home simple and affordable. In the design of a home, details are of utmost importance.
+        </p>
+      </div>
+
+      <div class="scroll-cue">
+        <div class="scroll-cue-line"></div>
+        <span class="scroll-cue-label">Scroll</span>
+      </div>
+
+      <div class="video-progress" id="videoProgress"></div>
+
+    </div>
+  </section>
+
+  <!-- ── SERVICES ──────────────────────────────── -->
+  <section class="services" id="services">
+    <div class="section-label reveal">Our Services</div>
+    <div class="services-header">
+      <h2 class="services-title reveal">What<br><em>We Do</em></h2>
+      <p class="services-intro reveal" style="transition-delay:0.12s">
+        We offer a range of services to make any space in your house more comfortable. If it's a bathroom remodel, a kitchen update, or finishing a basement you've been putting off, we can help you.
+      </p>
+    </div>
+    <div class="services-grid">
+      <a href="https://www.doitrightconstruction.ca/index.php/kitchen-renovation/" target="_blank" rel="noopener" class="service-item reveal" style="transition-delay:0s">
+        <span class="service-num">01</span>
+        <h3 class="service-name">Kitchen<br>Renovation</h3>
+        <div class="service-bar"></div>
+      </a>
+      <a href="https://www.doitrightconstruction.ca/index.php/bathroom-renovation/" target="_blank" rel="noopener" class="service-item reveal" style="transition-delay:0.1s">
+        <span class="service-num">02</span>
+        <h3 class="service-name">Bathroom<br>Renovation</h3>
+        <div class="service-bar"></div>
+      </a>
+      <a href="https://www.doitrightconstruction.ca/index.php/basement-renovation/" target="_blank" rel="noopener" class="service-item reveal" style="transition-delay:0.2s">
+        <span class="service-num">03</span>
+        <h3 class="service-name">Basement<br>Renovation</h3>
+        <div class="service-bar"></div>
+      </a>
+      <a href="https://www.doitrightconstruction.ca/index.php/exterior-renovation/" target="_blank" rel="noopener" class="service-item reveal" style="transition-delay:0.3s">
+        <span class="service-num">04</span>
+        <h3 class="service-name">Exterior<br>Renovation</h3>
+        <div class="service-bar"></div>
+      </a>
+    </div>
+  </section>
+
+  <!-- ── WHO WE ARE ────────────────────────────── -->
+  <section class="about" id="about">
+    <div class="about-inner">
+      <div class="section-label reveal">Who We Are</div>
+      <div class="about-grid">
+
+        <div class="manifesto">
+          <p class="manifesto-line reveal" style="transition-delay:0s">We are masterful.</p>
+          <p class="manifesto-line reveal" style="transition-delay:0.1s">We are perfectionists.</p>
+          <p class="manifesto-line reveal" style="transition-delay:0.2s">We are dream makers.</p>
+          <p class="manifesto-line accent reveal" style="transition-delay:0.32s">We are DoitRight.</p>
+        </div>
+
+        <div class="about-right">
+          <blockquote class="about-pull reveal" style="transition-delay:0.1s">
+            "We bring your vision to life."
+          </blockquote>
+          <p class="about-body reveal" style="transition-delay:0.22s">
+            DoitRight Construction is a family owned home renovation company servicing the Greater Toronto Area. With over 7 years of experience serving clients across the GTA, we take pride in making remodeling your home simple and affordable. In the design of a home, details are of utmost importance and our experience guarantees a quality makeover and customer satisfaction.
+          </p>
+          <p class="about-detail reveal" style="transition-delay:0.34s">
+            <span>&#9632;</span> Serving the Greater Toronto Area
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── TESTIMONIALS ──────────────────────────── -->
+  <section class="testimonials" id="testimonials">
+    <div class="testimonials-hd">
+      <div>
+        <div class="section-label reveal">Client Stories</div>
+        <h2 class="testimonials-title reveal">What Our<br>Clients Say</h2>
+      </div>
+      <p class="testimonials-note reveal">
+        Real words from homeowners across the Greater Toronto Area who trusted DoitRight Construction to transform their spaces.
+      </p>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card reveal" style="transition-delay:0s">
+        <span class="t-mark">&ldquo;</span>
+        <p class="t-text">The whole experience was great. We are very happy with our new bathroom.</p>
+        <p class="t-author">Jason</p>
+      </div>
+      <div class="testimonial-card reveal" style="transition-delay:0.12s">
+        <span class="t-mark">&ldquo;</span>
+        <p class="t-text">Sam was very punctual, honest and professional. Our basement renovation was completed.</p>
+        <p class="t-author">Jane</p>
+      </div>
+      <div class="testimonial-card reveal" style="transition-delay:0.24s">
+        <span class="t-mark">&ldquo;</span>
+        <p class="t-text">Our kitchen was completed on time. Sam helped us with the renovation needed within budget.</p>
+        <p class="t-author">Mark</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CTA ───────────────────────────────────── -->
+  <section class="cta-section" id="quote">
+    <div class="cta-inner">
+      <p class="cta-eyebrow reveal">Ready to Begin?</p>
+      <h2 class="cta-title reveal">Start Your<br>Renovation.</h2>
+      <p class="cta-sub reveal" style="transition-delay:0.12s">Precision Your Way.</p>
+      <a href="https://www.doitrightconstruction.ca/index.php/get-started-here/" class="cta-btn reveal" style="transition-delay:0.24s" target="_blank" rel="noopener">Get a Quote</a>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ────────────────────────────────── -->
+  <footer>
+    <div class="footer-logo">DoitRight Construction</div>
+    <ul class="footer-nav">
+      <li><a href="#">Home</a></li>
+      <li><a href="#about">About Us</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="https://www.doitrightconstruction.ca/index.php/get-started-here/" target="_blank" rel="noopener">Contact</a></li>
+    </ul>
+    <div class="footer-right">
+      <a href="https://www.instagram.com/doitright_construction.ca/" class="footer-ig" target="_blank" rel="noopener">@doitright_construction.ca</a>
+      <p class="footer-copy">DoitRight Construction &mdash; Greater Toronto Area</p>
+    </div>
+  </footer>
+
+  <script>
+    // ──────────────────────────────────────────────
+    // SCROLL-DRIVEN VIDEO — free scroll, fixed bg
+    // ──────────────────────────────────────────────
+    const video       = document.getElementById('heroVideo');
+    const section     = document.querySelector('.hero-section');
+    const progressBar = document.getElementById('videoProgress');
+
+    let ready          = false;
+    let targetProgress = 0;
+    let lerpProgress   = 0;
+    const EASE         = 0.07;
+
+    video.addEventListener('loadedmetadata', () => { ready = true; video.pause(); });
+    video.addEventListener('play', () => { video.pause(); });
+
+    function getScrollProgress() {
+      const rect = section.getBoundingClientRect();
+      // 0 when section top is at viewport top, 1 when section has fully scrolled off
+      return Math.max(0, Math.min(1, -rect.top / rect.height));
+    }
+
+    window.addEventListener('scroll', () => {
+      targetProgress = getScrollProgress();
+    }, { passive: true });
+
+    function loop() {
+      requestAnimationFrame(loop);
+      if (!ready || !video.duration) return;
+      lerpProgress += (targetProgress - lerpProgress) * EASE;
+      if (Math.abs(lerpProgress - targetProgress) > 0.0002) {
+        video.currentTime = lerpProgress * video.duration;
+        progressBar.style.width = (lerpProgress * 100) + '%';
+      }
+    }
+    loop();
+
+    window.addEventListener('load', () => {
+      ready = true;
+      targetProgress = getScrollProgress();
+      lerpProgress   = targetProgress;
+    });
+
+    // ──────────────────────────────────────────────
+    // SCROLL REVEALS
+    // ──────────────────────────────────────────────
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          io.unobserve(e.target);
+        }
+      }),
+      { threshold: 0.12, rootMargin: '0px 0px -4% 0px' }
+    );
+
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+    // ──────────────────────────────────────────────
+    // MANIFESTO — subtle parallax text color shift
+    // ──────────────────────────────────────────────
+    const manifesto = document.querySelector('.manifesto');
+    if (manifesto) {
+      const lines = manifesto.querySelectorAll('.manifesto-line:not(.accent)');
+      const ioM = new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting) {
+          lines.forEach((line, i) => {
+            setTimeout(() => line.style.color = 'var(--cream-dim)', i * 180);
+          });
+          ioM.unobserve(manifesto);
+        }
+      }, { threshold: 0.4 });
+      ioM.observe(manifesto);
+    }
+  </script>
+
+</body>
+</html>
