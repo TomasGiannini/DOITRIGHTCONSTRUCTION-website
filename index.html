@@ -152,6 +152,12 @@
       pointer-events: none;
     }
 
+    /* Mobile fallback — video hidden, deep gradient replaces it */
+    .no-video .hero-video { display: none; }
+    .no-video .hero-bg-overlay {
+      background: linear-gradient(160deg, #0a1a0f 0%, #080808 50%, #0d1a0a 100%);
+    }
+
     /* Hero — normal 100vh section, scrolls freely */
     .hero-section {
       position: relative;
@@ -1002,46 +1008,78 @@
 
   <script>
     // ──────────────────────────────────────────────
-    // SCROLL-DRIVEN VIDEO — free scroll, fixed bg
+    // SCROLL-DRIVEN VIDEO
     // ──────────────────────────────────────────────
     const video       = document.getElementById('heroVideo');
     const section     = document.querySelector('.hero-section');
     const progressBar = document.getElementById('videoProgress');
 
-    let ready          = false;
-    let targetProgress = 0;
-    let lerpProgress   = 0;
-    const EASE         = 0.07;
+    // ── Mobile detection ──────────────────────────
+    // iOS: position:fixed video doesn't render + preload ignored → no duration/seeking
+    // Android: same preload issues; touch devices generally poor for frame scrubbing
+    const isMobile = /Android|iPhone|iPad|iPod|IEMobile/i.test(navigator.userAgent)
+                  || (navigator.maxTouchPoints > 1 && window.innerWidth < 1024);
 
-    video.addEventListener('loadedmetadata', () => { ready = true; video.pause(); });
-    video.addEventListener('play', () => { video.pause(); });
+    if (isMobile) {
+      // Hide video entirely; CSS .no-video shows a dark gradient fallback
+      document.body.classList.add('no-video');
+    } else {
+      let ready          = false;
+      let targetProgress = 0;
+      let lerpProgress   = 0;
+      const EASE         = 0.07;
 
-    function getScrollProgress() {
-      const rect = section.getBoundingClientRect();
-      // 0 when section top is at viewport top, 1 when section has fully scrolled off
-      return Math.max(0, Math.min(1, -rect.top / rect.height));
-    }
+      // loadedmetadata fires once the browser knows duration — safe to seek after this
+      video.addEventListener('loadedmetadata', () => { ready = true; });
+      // Never let browser auto-play; we control currentTime manually
+      video.addEventListener('play', () => { video.pause(); });
 
-    window.addEventListener('scroll', () => {
-      targetProgress = getScrollProgress();
-    }, { passive: true });
-
-    function loop() {
-      requestAnimationFrame(loop);
-      if (!ready || !video.duration) return;
-      lerpProgress += (targetProgress - lerpProgress) * EASE;
-      if (Math.abs(lerpProgress - targetProgress) > 0.0002) {
-        video.currentTime = lerpProgress * video.duration;
-        progressBar.style.width = (lerpProgress * 100) + '%';
+      function getScrollProgress() {
+        const rect = section.getBoundingClientRect();
+        return Math.max(0, Math.min(1, -rect.top / rect.height));
       }
-    }
-    loop();
 
-    window.addEventListener('load', () => {
-      ready = true;
-      targetProgress = getScrollProgress();
-      lerpProgress   = targetProgress;
-    });
+      // Returns the closest seekable time that is definitely buffered.
+      // Prevents snapping to unbuffered regions on slow connections.
+      function bufferedClamp(targetTime) {
+        const buf = video.buffered;
+        if (!buf || buf.length === 0) return 0;
+        for (let i = 0; i < buf.length; i++) {
+          if (targetTime >= buf.start(i) && targetTime <= buf.end(i)) {
+            return targetTime; // already in a buffered range — safe to seek
+          }
+        }
+        // Outside every buffered range — clamp to the end of the largest buffer
+        let maxEnd = 0;
+        for (let i = 0; i < buf.length; i++) maxEnd = Math.max(maxEnd, buf.end(i));
+        return Math.min(targetTime, maxEnd);
+      }
+
+      window.addEventListener('scroll', () => {
+        targetProgress = getScrollProgress();
+      }, { passive: true });
+
+      function loop() {
+        requestAnimationFrame(loop);
+        if (!ready || !video.duration) return;
+
+        lerpProgress += (targetProgress - lerpProgress) * EASE;
+
+        if (Math.abs(lerpProgress - targetProgress) > 0.0002) {
+          const rawTime  = lerpProgress * video.duration;
+          const seekTime = bufferedClamp(rawTime);
+          video.currentTime = seekTime;
+          progressBar.style.width = (lerpProgress * 100) + '%';
+        }
+      }
+      loop();
+
+      window.addEventListener('load', () => {
+        ready = true;
+        targetProgress = getScrollProgress();
+        lerpProgress   = targetProgress;
+      });
+    }
 
     // ──────────────────────────────────────────────
     // SCROLL REVEALS
