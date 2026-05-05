@@ -142,6 +142,11 @@
       object-position: center;
       filter: brightness(0.52) saturate(0.85);
       z-index: 0;
+      /* Force GPU compositing layer — fixes iOS Safari position:fixed video black-screen bug */
+      -webkit-transform: translate3d(0, 0, 0);
+      transform: translate3d(0, 0, 0);
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
     }
 
     .hero-bg-overlay {
@@ -152,11 +157,6 @@
       pointer-events: none;
     }
 
-    /* Mobile fallback — video hidden, deep gradient replaces it */
-    .no-video .hero-video { display: none; }
-    .no-video .hero-bg-overlay {
-      background: linear-gradient(160deg, #0a1a0f 0%, #080808 50%, #0d1a0a 100%);
-    }
 
     /* Hero — normal 100vh section, scrolls freely */
     .hero-section {
@@ -843,7 +843,7 @@
 <body>
 
   <!-- ── FIXED BACKGROUND VIDEO (behind all content) ── -->
-  <video class="hero-video" id="heroVideo" muted playsinline preload="auto">
+  <video class="hero-video" id="heroVideo" muted playsinline webkit-playsinline preload="auto">
     <source src="kling1.mp4" type="video/mp4">
   </video>
   <div class="hero-bg-overlay"></div>
@@ -1014,24 +1014,30 @@
     const section     = document.querySelector('.hero-section');
     const progressBar = document.getElementById('videoProgress');
 
-    // ── Mobile detection ──────────────────────────
-    // iOS: position:fixed video doesn't render + preload ignored → no duration/seeking
-    // Android: same preload issues; touch devices generally poor for frame scrubbing
     const isMobile = /Android|iPhone|iPad|iPod|IEMobile/i.test(navigator.userAgent)
                   || (navigator.maxTouchPoints > 1 && window.innerWidth < 1024);
 
     if (isMobile) {
-      // Hide video entirely; CSS .no-video shows a dark gradient fallback
-      document.body.classList.add('no-video');
+      // Mobile: autoplay + loop as a normal background video.
+      // Scroll-scrubbing via currentTime is unreliable on mobile (preload ignored,
+      // seeking without user gesture blocked on iOS). Autoplay works because
+      // the video is muted + playsinline.
+      video.setAttribute('autoplay', '');
+      video.setAttribute('loop', '');
+      video.load();
+      video.play().catch(() => {
+        // If autoplay is still blocked (e.g. very restricted browser),
+        // play on first user interaction instead
+        document.addEventListener('touchstart', () => video.play().catch(() => {}), { once: true });
+      });
     } else {
+      // Desktop: scroll-driven frame scrubbing with buffer-aware seeking
       let ready          = false;
       let targetProgress = 0;
       let lerpProgress   = 0;
       const EASE         = 0.07;
 
-      // loadedmetadata fires once the browser knows duration — safe to seek after this
       video.addEventListener('loadedmetadata', () => { ready = true; });
-      // Never let browser auto-play; we control currentTime manually
       video.addEventListener('play', () => { video.pause(); });
 
       function getScrollProgress() {
@@ -1039,20 +1045,16 @@
         return Math.max(0, Math.min(1, -rect.top / rect.height));
       }
 
-      // Returns the closest seekable time that is definitely buffered.
-      // Prevents snapping to unbuffered regions on slow connections.
-      function bufferedClamp(targetTime) {
+      // Only seek within buffered ranges — prevents snapping on slow connections
+      function bufferedClamp(t) {
         const buf = video.buffered;
         if (!buf || buf.length === 0) return 0;
         for (let i = 0; i < buf.length; i++) {
-          if (targetTime >= buf.start(i) && targetTime <= buf.end(i)) {
-            return targetTime; // already in a buffered range — safe to seek
-          }
+          if (t >= buf.start(i) && t <= buf.end(i)) return t;
         }
-        // Outside every buffered range — clamp to the end of the largest buffer
         let maxEnd = 0;
         for (let i = 0; i < buf.length; i++) maxEnd = Math.max(maxEnd, buf.end(i));
-        return Math.min(targetTime, maxEnd);
+        return Math.min(t, maxEnd);
       }
 
       window.addEventListener('scroll', () => {
@@ -1062,13 +1064,9 @@
       function loop() {
         requestAnimationFrame(loop);
         if (!ready || !video.duration) return;
-
         lerpProgress += (targetProgress - lerpProgress) * EASE;
-
         if (Math.abs(lerpProgress - targetProgress) > 0.0002) {
-          const rawTime  = lerpProgress * video.duration;
-          const seekTime = bufferedClamp(rawTime);
-          video.currentTime = seekTime;
+          video.currentTime = bufferedClamp(lerpProgress * video.duration);
           progressBar.style.width = (lerpProgress * 100) + '%';
         }
       }
