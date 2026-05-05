@@ -55,7 +55,7 @@
       position: absolute;
       top: 0; left: 0; right: 0;
       z-index: 500;
-      padding: 1.6rem 4rem;
+      padding: 20px 4rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -177,7 +177,8 @@
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
-      padding: 9rem 4.5rem 5.5rem;
+      /* top padding measured in px so it's immune to rem/zoom drift */
+      padding: 120px 4.5rem 5.5rem;
     }
 
     .hero-eyebrow {
@@ -1062,13 +1063,23 @@
       return Math.min(t, maxEnd);
     }
 
-    function loop() {
+    const SEEK_INTERVAL = 1000 / 24; // throttle to ~24fps max — reduces decode load on slow CPUs
+    const MIN_TIME_DELTA = 1 / 24;   // skip seek if time change is under one 24fps frame
+    let lastSeekAt = 0;
+
+    function loop(timestamp) {
       requestAnimationFrame(loop);
       if (!ready || !video.duration) return;
       lerpProgress += (targetProgress - lerpProgress) * EASE;
-      if (Math.abs(lerpProgress - targetProgress) > 0.0002) {
-        video.currentTime = bufferedClamp(lerpProgress * video.duration);
+
+      const targetTime = bufferedClamp(lerpProgress * video.duration);
+      const timeDelta  = Math.abs(targetTime - video.currentTime);
+      const elapsed    = timestamp - lastSeekAt;
+
+      if (timeDelta > MIN_TIME_DELTA && elapsed >= SEEK_INTERVAL) {
+        video.currentTime = targetTime;
         progressBar.style.width = (lerpProgress * 100) + '%';
+        lastSeekAt = timestamp;
       }
     }
     loop();
